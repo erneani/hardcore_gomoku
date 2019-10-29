@@ -12,4 +12,6 @@ void printGobanHeaders(Goban);
 void printGobanMiddleLines(Goban);
 void showIntersection(Goban, int, int);
 void initializeGoban();
+int checkRounds(Goban, int, int, int, int, int);
+int checkEnd(Goban, int, int, int);
 int insertPiece(Goban, int, int, int);

@@ -11,19 +11,24 @@ int preGame(Player white, Player black, Goban goban) {
 	goban.checks = (int*)malloc(goban.lines * goban.columns * sizeof(int));
 
 	initializeGoban(goban);
-	
-	printf("Insira a quantidade máxima de partidas: ");
-	scanf("%d", &maxP);
 
-	return playGame(1, maxP, white, black, goban);
+	return playGame(1, goban.lines * goban.lines, white, black, goban);
 }
 
-int playGame(int n, int maxP, Player white, Player black, Goban goban) {
+int checkDraw(Goban goban, int n, int maxP) {
 	if (n == maxP+1) {
+		printf("O jogo empatou!");
 		endGame(goban);
 
 		return 1;
 	}
+
+	return 0;
+}
+
+int playGame(int n, int maxP, Player white, Player black, Goban goban) {
+	if (checkDraw(goban, n, maxP))
+		return 1;
 
 	int lin, col, valid = 0, result;
 
@@ -57,6 +62,9 @@ int playGame(int n, int maxP, Player white, Player black, Goban goban) {
 	
 	if (!result) {
 		return playGame(n, maxP, white, black, goban);
+	} else if (result == 2) {
+		endGame(goban);
+		return 1;
 	}
 
 	return playGame(n+1, maxP, white, black, goban);

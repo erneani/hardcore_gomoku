@@ -33,7 +33,7 @@ void printGoban(Goban goban)
 			showIntersection(goban, i, j);
 		}
 		
-		printf(" %d\n", i);
+		printf(" %d\n", i+1);
 
 		if (i != goban.lines - 1)
 			printGobanMiddleLines(goban);
@@ -91,12 +91,55 @@ void initializeGoban(Goban goban) {
 	}
 }
 
+int checkRounds(Goban goban, int lin, int col, int itX, int itY, int piece) {
+	int offset = (lin * goban.columns) + col; 
+	
+	if (goban.checks[offset] == piece)
+		return 1 + checkRounds(goban, lin+itX, col+itY, itX, itY, piece);
+	else
+		return 0;
+}
+
+int checkEnd(Goban goban, int lin, int col, int piece) {
+	int sumX1 = checkRounds(goban, lin+1, col, 1, 0, 2);
+	int sumX2 = checkRounds(goban, lin-1, col, -1, 0, 2);
+		
+	if (sumX1 + sumX2 >= 4)
+		return 1;
+
+	int sumY1 = checkRounds(goban, lin, col-1, 0, -1, 2);
+	int sumY2 = checkRounds(goban, lin, col+1, 0, 1, 2);
+	
+	if (sumY1 + sumY2 >= 4)
+		return 1;
+
+	int sumD11 = checkRounds(goban, lin-1, col-1, -1, -1, 2);
+	int sumD12 = checkRounds(goban, lin+1, col+1, 1, 1, 2);
+
+	if (sumD11 + sumD12 >= 4)
+		return 1;
+
+	int sumD21 = checkRounds(goban, lin+1, col-1, 1, -1, 2);
+	int sumD22 = checkRounds(goban, lin-1, col+1, -1, 1, 2);
+
+	if (sumD21 + sumD22 >= 4)
+		return 1;
+
+	return 0;
+}
+
 int insertPiece(Goban goban, int lin, int col, int piece) {
 	int offset = (lin * goban.columns) + col;
 
 	if (goban.checks[offset] == 0) {
 		goban.checks[offset] = piece;
-		return 1;
+
+		if (checkEnd(goban, lin, col, piece)) {
+			printf("O jogador %d ganhou!", piece);
+			return 2;
+		}
+		else
+			return 1;
 	} else {
 		printf("Esta interseção já possui uma peça.\n");
 		return 0;
