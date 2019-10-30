@@ -6,6 +6,7 @@
 Player createNewPlayer(char name[]) {
 	Player newPlayer;
 	strcpy(newPlayer.name, name);
+	newPlayer.winCount = 0;
 
 	return newPlayer;
 }

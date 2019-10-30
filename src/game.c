@@ -26,9 +26,34 @@ int checkDraw(Goban goban, int n, int maxP) {
 	return 0;
 }
 
-int playGame(int n, int maxP, Player white, Player black, Goban goban) {
-	if (checkDraw(goban, n, maxP))
+int checkEndGame() {
+
+}
+
+short int playAgain(Player p1, Player p2) {
+	int choice;
+	printf("-------------- Jogo finalizado ----------------\n");
+
+	showScore(p1, p2);
+
+	printf("Deseja jogar novamente?\n");
+	printf("1 - SIM\n2 - NÃO\n");
+	
+	printf(": ");
+	scanf("%d", &choice);
+
+	if (choice == 1) {
 		return 1;
+	} else {
+		return 0;
+	}
+}
+
+int playGame(int n, int maxP, Player white, Player black, Goban goban) {
+	if (checkDraw(goban, n, maxP)) {
+		short int result = playAgain(black, white);
+		return result;
+	}
 
 	int lin, col, valid = 0, result;
 
@@ -63,8 +88,15 @@ int playGame(int n, int maxP, Player white, Player black, Goban goban) {
 	if (!result) {
 		return playGame(n, maxP, white, black, goban);
 	} else if (result == 2) {
+		if (n%2 == 0) {
+			white.winCount++;
+		} else {
+			black.winCount++;
+		}
+		
 		endGame(goban);
-		return 1;
+		short int result = playAgain(black, white);
+		return result;
 	}
 
 	return playGame(n+1, maxP, white, black, goban);
@@ -73,4 +105,9 @@ int playGame(int n, int maxP, Player white, Player black, Goban goban) {
 void endGame(Goban goban) {
 	printf("\n\n\nStatus final do tabuleiro: \n");
 	printGoban(goban);
+}
+
+void showScore(Player p1, Player p2) {
+	printf("Pontuação:\n");
+	printf("%s - %d X %d - %s\n", p1.name, p1.winCount, p2.winCount, p2.name);
 }

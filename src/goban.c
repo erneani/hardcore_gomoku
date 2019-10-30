@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "./headers/goban.h"
+#include "./headers/player.h"
 
 Goban createGoban()
 {
@@ -101,26 +102,26 @@ int checkRounds(Goban goban, int lin, int col, int itX, int itY, int piece) {
 }
 
 int checkEnd(Goban goban, int lin, int col, int piece) {
-	int sumX1 = checkRounds(goban, lin+1, col, 1, 0, 2);
-	int sumX2 = checkRounds(goban, lin-1, col, -1, 0, 2);
+	int sumX1 = checkRounds(goban, lin+1, col, 1, 0, piece);
+	int sumX2 = checkRounds(goban, lin-1, col, -1, 0, piece);
 		
 	if (sumX1 + sumX2 >= 4)
 		return 1;
 
-	int sumY1 = checkRounds(goban, lin, col-1, 0, -1, 2);
-	int sumY2 = checkRounds(goban, lin, col+1, 0, 1, 2);
+	int sumY1 = checkRounds(goban, lin, col-1, 0, -1, piece);
+	int sumY2 = checkRounds(goban, lin, col+1, 0, 1, piece);
 	
 	if (sumY1 + sumY2 >= 4)
 		return 1;
 
-	int sumD11 = checkRounds(goban, lin-1, col-1, -1, -1, 2);
-	int sumD12 = checkRounds(goban, lin+1, col+1, 1, 1, 2);
+	int sumD11 = checkRounds(goban, lin-1, col-1, -1, -1, piece);
+	int sumD12 = checkRounds(goban, lin+1, col+1, 1, 1, piece);
 
 	if (sumD11 + sumD12 >= 4)
 		return 1;
 
-	int sumD21 = checkRounds(goban, lin+1, col-1, 1, -1, 2);
-	int sumD22 = checkRounds(goban, lin-1, col+1, -1, 1, 2);
+	int sumD21 = checkRounds(goban, lin+1, col-1, 1, -1, piece);
+	int sumD22 = checkRounds(goban, lin-1, col+1, -1, 1, piece);
 
 	if (sumD21 + sumD22 >= 4)
 		return 1;
@@ -135,11 +136,11 @@ int insertPiece(Goban goban, int lin, int col, int piece) {
 		goban.checks[offset] = piece;
 
 		if (checkEnd(goban, lin, col, piece)) {
-			printf("O jogador %d ganhou!", piece);
 			return 2;
 		}
-		else
+		else {
 			return 1;
+		}
 	} else {
 		printf("Esta interseção já possui uma peça.\n");
 		return 0;
