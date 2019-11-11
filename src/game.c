@@ -26,10 +26,6 @@ int checkDraw(Goban goban, int n, int maxP) {
 	return 0;
 }
 
-int checkEndGame() {
-
-}
-
 short int playAgain(Player p1, Player p2) {
 	int choice;
 	printf("-------------- Jogo finalizado ----------------\n");
@@ -57,13 +53,9 @@ int playGame(int n, int maxP, Player white, Player black, Goban goban) {
 
 	int lin, col, valid = 0, result;
 
-	puts("");
+	breakline();
 
-	if (n%2 == 0) {
-		printf("É a vez de %s (%c)\n", white.name, white.color);
-	} else {
-		printf("É a vez de %s (%c)\n", black.name, black.color);
-	}
+	showTurn(n, black, white);
 
 	printGoban(goban);
 
@@ -76,8 +68,7 @@ int playGame(int n, int maxP, Player white, Player black, Goban goban) {
 	if ((lin <= goban.lines && lin >= 0) && (col <= goban.columns && col >= 0)) {
 		valid = 1;
 	} else {
-		printf("* -------- Por favor, selecione uma intersecção válida. --------- *\n");
-		return playGame(n, maxP, white, black, goban);
+		showInvalidPlay(n, maxP, white, black, goban);
 	}
 
 	if (n%2 == 0)
@@ -97,6 +88,30 @@ int playGame(int n, int maxP, Player white, Player black, Goban goban) {
 		endGame(goban);
 		short int result = playAgain(black, white);
 		return result;
+	} else if (result == 3) {
+		if (n%2 == 0) {
+			white.captures += 1;
+		} else {
+			black.captures += 1;
+		}
+
+		printf("b - %d, p - %d", white.captures, black.captures);
+
+		if (white.captures == 5) {
+			white.winCount++;
+
+			endGame(goban);
+			short int result = playAgain(black, white);
+
+			return result;
+		} else if(black.captures == 5) {
+			black.winCount++;
+
+			endGame(goban);
+			short int result = playAgain(black, white);
+			
+			return result;
+		}
 	}
 
 	return playGame(n+1, maxP, white, black, goban);
@@ -110,4 +125,21 @@ void endGame(Goban goban) {
 void showScore(Player p1, Player p2) {
 	printf("Pontuação:\n");
 	printf("%s - %d X %d - %s\n", p1.name, p1.winCount, p2.winCount, p2.name);
+}
+
+void showTurn(int n, Player p1, Player p2) {
+	if (n%2 == 0) {
+		printf("É a vez de %s (%c) - %d capturas\n", p2.name, p2.color, p2.captures);
+	} else {
+		printf("É a vez de %s (%c) - %d capturas\n", p1.name, p1.color, p1.captures);
+	}
+}
+
+void breakline() {
+	puts("");
+}
+
+void showInvalidPlay(int n, int maxP, Player p1, Player p2, Goban goban) {
+	printf("* -------- Por favor, selecione uma intersecção válida. --------- *\n");
+	return playGame(n, maxP, p2, p1, goban);
 }

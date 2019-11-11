@@ -2,8 +2,7 @@
 #include "./headers/goban.h"
 #include "./headers/player.h"
 
-Goban createGoban()
-{
+Goban createGoban() {
 	int n, valid = 0;
 
 	printf("Tamanho do Goban (4 < n < 20): ");
@@ -25,8 +24,7 @@ Goban createGoban()
 	return newGoban;
 }
 
-void printGoban(Goban goban)
-{
+void printGoban(Goban goban) {
 	printGobanHeaders(goban);
 
 	for (int i = 0; i < goban.lines; ++i) {
@@ -93,7 +91,7 @@ void initializeGoban(Goban goban) {
 }
 
 int checkRounds(Goban goban, int lin, int col, int itX, int itY, int piece) {
-	int offset = (lin * goban.columns) + col; 
+	int offset = (lin * goban.columns) + col;
 	
 	if (goban.checks[offset] == piece)
 		return 1 + checkRounds(goban, lin+itX, col+itY, itX, itY, piece);
@@ -129,11 +127,72 @@ int checkEnd(Goban goban, int lin, int col, int piece) {
 	return 0;
 }
 
+int capturePieces(Goban goban, int lin0, int col0, int lin, int col, int itX, int itY, int piece) {
+	int offset = (lin * goban.columns) + col;
+
+	if (lin == lin0 && col == col0) {
+		return 1;
+	} else {
+		goban.checks[offset] = 0;
+		capturePieces(goban, lin0, col0, lin + itX, col + itY, itX, itY, piece);
+	}
+}
+
+int checkCaptureMiddle(Goban goban, int lin, int col, int itX, int itY, int piece) {
+	int offset = (lin * goban.columns) + col;
+
+	if (goban.checks[offset] != piece)
+		return 1 + checkCaptureMiddle(goban, lin + itX, col + itY, itX, itY, piece);
+	else
+		return 0;
+}
+
+int checkCaptureRound(Goban goban, int lin0, int col0, int lin, int col, int itX, int itY, int piece) {
+	int offset = (lin * goban.columns) + col;
+
+	if (goban.checks[offset] == piece) {
+		int result = checkCaptureMiddle(goban, lin + itX, col + itY, itX, itY, piece);
+
+		if (result == 2) {
+			printf("Capturing pieces");
+			capturePieces(goban, lin0, col0, lin + itX, col + itY, itX, itY, piece);
+
+			return 1;
+		}
+	} else {
+		return 0;
+	}
+}
+
+int checkCapture(Goban goban, int lin, int col, int piece) {
+	int capX1 = checkCaptureRound(goban, lin, col, lin, col+3, 0, -1, piece);
+	int capX2 = checkCaptureRound(goban, lin, col, lin, col-3, 0, 1, piece);
+
+	int capY1 = checkCaptureRound(goban, lin, col, lin+3, col, 0, -1, piece);
+	int capY2 = checkCaptureRound(goban, lin, col, lin-3, col, 0, 1, piece);
+
+	int capD11 = checkCaptureRound(goban, lin, col, lin+3, col+3, -1, -1, piece);
+	int capD12 = checkCaptureRound(goban, lin, col, lin-3, col-3, 1, 1, piece);
+
+	int capD21 = checkCaptureRound(goban, lin, col, lin-3, col+3, 1, -1, piece);
+	int capD22 = checkCaptureRound(goban, lin, col, lin+3, col-3, -1, 1, piece);
+
+	if (capX1 || capX2 || capY1 || capY2 || capD11 || capD12 || capD21 || capD22) {
+		return 1;
+	}
+
+	return 0;
+}
+
 int insertPiece(Goban goban, int lin, int col, int piece) {
 	int offset = (lin * goban.columns) + col;
 
 	if (goban.checks[offset] == 0) {
 		goban.checks[offset] = piece;
+
+		if (checkCapture(goban, lin, col, piece)) {
+			return 3;
+		}
 
 		if (checkEnd(goban, lin, col, piece)) {
 			return 2;

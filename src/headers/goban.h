@@ -16,3 +16,7 @@ void initializeGoban();
 int checkRounds(Goban, int, int, int, int, int);
 int checkEnd(Goban, int, int, int);
 int insertPiece(Goban, int, int, int);
+int checkCaptureMiddle(Goban, int , int , int , int, int);
+int checkCaptureRound(Goban, int, int, int, int, int, int, int);
+int checkCapture(Goban, int, int, int);
+int capturePieces(Goban, int, int, int, int, int, int, int);
