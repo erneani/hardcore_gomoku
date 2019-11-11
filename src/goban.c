@@ -154,7 +154,6 @@ int checkCaptureRound(Goban goban, int lin0, int col0, int lin, int col, int itX
 		int result = checkCaptureMiddle(goban, lin + itX, col + itY, itX, itY, piece);
 
 		if (result == 2) {
-			printf("Capturing pieces");
 			capturePieces(goban, lin0, col0, lin + itX, col + itY, itX, itY, piece);
 
 			return 1;
@@ -168,8 +167,8 @@ int checkCapture(Goban goban, int lin, int col, int piece) {
 	int capX1 = checkCaptureRound(goban, lin, col, lin, col+3, 0, -1, piece);
 	int capX2 = checkCaptureRound(goban, lin, col, lin, col-3, 0, 1, piece);
 
-	int capY1 = checkCaptureRound(goban, lin, col, lin+3, col, 0, -1, piece);
-	int capY2 = checkCaptureRound(goban, lin, col, lin-3, col, 0, 1, piece);
+	int capY1 = checkCaptureRound(goban, lin, col, lin+3, col, -1, 0, piece);
+	int capY2 = checkCaptureRound(goban, lin, col, lin-3, col, 1, 0, piece);
 
 	int capD11 = checkCaptureRound(goban, lin, col, lin+3, col+3, -1, -1, piece);
 	int capD12 = checkCaptureRound(goban, lin, col, lin-3, col-3, 1, 1, piece);
@@ -191,6 +190,7 @@ int insertPiece(Goban goban, int lin, int col, int piece) {
 		goban.checks[offset] = piece;
 
 		if (checkCapture(goban, lin, col, piece)) {
+			printf("\n\n---------- Capturando peças! -----------\n\n");
 			return 3;
 		}
 

@@ -95,8 +95,6 @@ int playGame(int n, int maxP, Player white, Player black, Goban goban) {
 			black.captures += 1;
 		}
 
-		printf("b - %d, p - %d", white.captures, black.captures);
-
 		if (white.captures == 5) {
 			white.winCount++;
 
@@ -109,7 +107,7 @@ int playGame(int n, int maxP, Player white, Player black, Goban goban) {
 
 			endGame(goban);
 			short int result = playAgain(black, white);
-			
+
 			return result;
 		}
 	}
@@ -140,6 +138,6 @@ void breakline() {
 }
 
 void showInvalidPlay(int n, int maxP, Player p1, Player p2, Goban goban) {
-	printf("* -------- Por favor, selecione uma intersecção válida. --------- *\n");
+	printf("\n\n* -------- Por favor, selecione uma intersecção válida. --------- *\n\n");
 	return playGame(n, maxP, p2, p1, goban);
 }
