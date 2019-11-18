@@ -9,3 +9,4 @@ typedef struct {
 
 Player createNewPlayer(char[]);
 Player registerPlayer(int);
+Player loadPlayerFromFile(char[], int);

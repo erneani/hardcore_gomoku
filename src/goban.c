@@ -18,9 +18,17 @@ Goban createGoban() {
 	} while(!valid);
 	
 	Goban newGoban;
-	newGoban.lines   = n;
+	newGoban.lines = n;
 	newGoban.columns = n;
 	
+	return newGoban;
+}
+
+Goban loadGobanFromFile(int dimension) {
+	Goban newGoban;
+	newGoban.lines = dimension;
+	newGoban.columns = dimension;
+
 	return newGoban;
 }
 

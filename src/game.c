@@ -3,9 +3,18 @@
 #include "./headers/goban.h"
 #include "./headers/game.h"
 
-int preGame(Player white, Player black, Goban goban) {
-	int maxP;
+int saveGame(Player p1, Player p2, Goban goban) {
+	FILE *file;
+	file = fopen("./files/save", "w");
 
+	fprintf(file, "%s %d\n", p1.name, p1.winCount);
+	fprintf(file, "%s %d\n", p2.name, p2.winCount);
+	fprintf(file, "%d", goban.lines);
+
+	fclose(file);
+}
+
+int preGame(Player white, Player black, Goban goban) {
 	black.color = 'P';
 	white.color = 'B';
 	goban.checks = (int*)malloc(goban.lines * goban.columns * sizeof(int));
@@ -26,19 +35,23 @@ int checkDraw(Goban goban, int n, int maxP) {
 	return 0;
 }
 
-short int playAgain(Player p1, Player p2) {
+short int playAgain(Player p1, Player p2, Goban goban) {
 	int choice;
 	printf("-------------- Jogo finalizado ----------------\n");
 
 	showScore(p1, p2);
 
 	printf("Deseja jogar novamente?\n");
-	printf("1 - SIM\n2 - NÃO\n");
+	printf("1 - SIM\n2 - NÃO\n3 - Salvar jogo\n");
 	
 	printf(": ");
 	scanf("%d", &choice);
 
-	if (choice == 1) {
+	if (choice == 3) {
+		saveGame(p1, p2, goban);
+		printf("\n\n\n\n-------------- O jogo foi salvo --------------\n\n\n\n");
+		return playAgain(p1, p2, goban);
+	} else if (choice == 1) {
 		return 1;
 	} else {
 		return 0;
@@ -47,7 +60,7 @@ short int playAgain(Player p1, Player p2) {
 
 int playGame(int n, int maxP, Player white, Player black, Goban goban) {
 	if (checkDraw(goban, n, maxP)) {
-		short int result = playAgain(black, white);
+		short int result = playAgain(black, white, goban);
 		return result;
 	}
 
@@ -86,7 +99,7 @@ int playGame(int n, int maxP, Player white, Player black, Goban goban) {
 		}
 		
 		endGame(goban);
-		short int result = playAgain(black, white);
+		short int result = playAgain(black, white, goban);
 		return result;
 	} else if (result == 3) {
 		if (n%2 == 0) {
@@ -99,14 +112,14 @@ int playGame(int n, int maxP, Player white, Player black, Goban goban) {
 			white.winCount++;
 
 			endGame(goban);
-			short int result = playAgain(black, white);
+			short int result = playAgain(black, white, goban);
 
 			return result;
 		} else if(black.captures == 5) {
 			black.winCount++;
 
 			endGame(goban);
-			short int result = playAgain(black, white);
+			short int result = playAgain(black, white, goban);
 
 			return result;
 		}

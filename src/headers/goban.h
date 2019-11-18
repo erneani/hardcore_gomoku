@@ -8,6 +8,7 @@ typedef struct {
 } Goban;
 
 Goban createGoban();
+Goban loadGobanFromFile(int);
 void printGoban();
 void printGobanHeaders(Goban);
 void printGobanMiddleLines(Goban);

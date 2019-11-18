@@ -22,3 +22,10 @@ Player registerPlayer(int n) {
 	p = createNewPlayer(name);
 	return p;
 }
+
+Player loadPlayerFromFile(char player[], int wins) {
+	Player newPlayer = createNewPlayer(player);
+	newPlayer.winCount = wins;
+	
+	return newPlayer;
+}
