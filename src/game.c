@@ -4,12 +4,18 @@
 #include "./headers/game.h"
 
 int saveGame(Player p1, Player p2, Goban goban) {
+	int slot;
 	FILE *file;
-	file = fopen("./files/save", "w");
+	file = fopen("./files/save", "a");
 
+	printf("Insira o slot do save (digite um inteiro): ");
+	scanf("%d", &slot);
+
+	fprintf(file, "\n");
+	fprintf(file, "%d\n", slot);
 	fprintf(file, "%s %d\n", p1.name, p1.winCount);
 	fprintf(file, "%s %d\n", p2.name, p2.winCount);
-	fprintf(file, "%d", goban.lines);
+	fprintf(file, "l %d", goban.lines);
 
 	fclose(file);
 }

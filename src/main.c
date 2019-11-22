@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include "./headers/player.h"
 #include "./headers/goban.h"
 #include "./headers/game.h"
@@ -13,7 +14,7 @@ short int loadGame() {
 		return 0;
 	} else {
 		printf("Deseja carregar o jogo anterior?\n");
-		printf("1 - SIM\nQualquer outra tecla - NÃO\n");
+		printf("1 - SIM\n2 - NÃO\n");
 		printf("Resposta: ");
 
 		int option;
@@ -24,10 +25,6 @@ short int loadGame() {
 			return 0;
 		}
 	}
-}
-
-short int recoverGameFromSave() {
-
 }
 
 int main() {
@@ -41,17 +38,45 @@ int main() {
 	if (loadGame()) {
 		Player p[2];
 		int dimension;
+		int slot;
+		char strSlot[10];
+
+		char* line = NULL;
+		size_t len = 0;
+		ssize_t read;
+
+		int found = 0;
+
+		printf("Você deseja carregar qual jogo salvo? ");
+		scanf("%d", &slot);
+
+		sprintf(strSlot, "%d", slot);
 
 		FILE *file;
 		file = fopen("./files/save", "r");
 
-		for (int i = 0; i < 2; i++) {
-			fscanf(file, "%s", &p[i].name);
-			fscanf(file, "%d", &p[i].winCount);
-			fscanf(file, "\n");
+		while((read = getline(&line, &len, file)) != -1) {
+			if (read <= 2) {
+				line[1] = '\0';
+				if (strcmp(line, strSlot) == 0) {
+					for (int i = 0; i < 2; i++) {
+						fscanf(file, "%s", &p[i].name);
+						fscanf(file, "%d", &p[i].winCount);
+						fscanf(file, "\n");
+					}
+
+					fscanf(file, "%d", &dimension);
+
+					found = 1;
+				}
+			}
 		}
 
-		fscanf(file, "%d", &dimension);
+		if (!found) {
+			printf("\n\n\n\n--------- O jogo não foi encontrado. Tente novamente.---------\n\n\n\n");
+			return main();
+		}
+		
 		fclose(file);
 
 		p1 = loadPlayerFromFile(p[0].name, p[0].winCount);
